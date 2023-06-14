@@ -1,10 +1,13 @@
 import express from "express";
 import mongoose from "mongoose";
 import { AuthRouter } from "./routes/index.js";
+import cors from "cors";
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 const db =
   "mongodb+srv://azahqwerty:j6xlEOKcaI5GzB36@cluster0.292rjwk.mongodb.net/?retryWrites=true&w=majority";
+app.use(cors());
 app.use(express.json());
 app.use("/auth", AuthRouter);
 const Start = async () => {
