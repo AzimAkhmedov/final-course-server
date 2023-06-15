@@ -1,16 +1,16 @@
 import { Router } from "express";
-import controller from "../controllers/Collection.js";
+import { CollectionController } from "../controllers/index.js";
 const collectionRouter = new Router();
-collectionRouter.post("/", controller.createNewCollection);
-collectionRouter.get("/:username", controller.getUserCollections);
+collectionRouter.post("/", CollectionController.createNewCollection);
+collectionRouter.get("/:username", CollectionController.getUserCollections);
 collectionRouter.delete(
   "/:username/:collectionName",
-  controller.deleteCollection
+  CollectionController.deleteCollection
 );
-collectionRouter.post("/add", controller.addToCollection);
-collectionRouter.delete("/:_id", controller.removeFromCollection);
+collectionRouter.post("/add", CollectionController.addToCollection);
+collectionRouter.delete("/:_id", CollectionController.removeFromCollection);
 collectionRouter.get(
   "/:username/:collectionName",
-  controller.getCurrentCollection
+  CollectionController.getCurrentCollection
 );
 export default collectionRouter;
