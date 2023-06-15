@@ -1,5 +1,6 @@
-import Collection from "../models/Collection";
-import User from "../models/User";
+import Collection from "../models/Collection.js";
+import Item from "../models/Item.js";
+import User from "../models/User.js";
 
 class CollectionController {
   async createNewCollection(req, res) {
@@ -10,7 +11,7 @@ class CollectionController {
         .status(400)
         .json({ message: "Пользователь с таким именем не существует" });
     }
-    const collection = await Collection.findOne({ collectionName });
+    const collection = await Collection.findOne({ collectionName,username });
     if (collection && collection.username === username) {
       return res
         .status(400)
@@ -31,8 +32,27 @@ class CollectionController {
   }
   async getUserCollections(req, res) {
     const username = req.params.username;
-    const collection = await Collection.findOne({ username });
-    return res.json({ collection });
+    let collection = [];
+    collection = await Collection.find({ username });
+    return res.json({ collection, username });
+  }
+  async addToCollection(req, res) {
+    const { username, collectionName, params } = req.body;
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "Пользователь с таким именем не существует" });
+    }
+    const collection = await Collection.findOne({ collectionName,username });
+    if (!collection) {
+      return res
+        .status(400)
+        .json({ message: "У этого пользователя нет такой коллекции" });
+    }
+    const item = new Item({ collectionName, params, username });
+    await item.save();
+    return res.json({ message: "Сохранено" });
   }
 }
 
