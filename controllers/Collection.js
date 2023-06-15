@@ -11,7 +11,7 @@ class CollectionController {
         .status(400)
         .json({ message: "Пользователь с таким именем не существует" });
     }
-    const collection = await Collection.findOne({ collectionName,username });
+    const collection = await Collection.findOne({ collectionName, username });
     if (collection && collection.username === username) {
       return res
         .status(400)
@@ -26,7 +26,6 @@ class CollectionController {
     const username = req.params.username;
     const collectionName = req.params.collectionName;
     const collection = await Collection.findOne({ collectionName, username });
-
     await collection.deleteOne();
     return res.json({ message: "Успешно удалено" });
   }
@@ -44,7 +43,7 @@ class CollectionController {
         .status(400)
         .json({ message: "Пользователь с таким именем не существует" });
     }
-    const collection = await Collection.findOne({ collectionName,username });
+    const collection = await Collection.findOne({ collectionName, username });
     if (!collection) {
       return res
         .status(400)
@@ -53,6 +52,32 @@ class CollectionController {
     const item = new Item({ collectionName, params, username });
     await item.save();
     return res.json({ message: "Сохранено" });
+  }
+  async removeFromCollection(req, res) {
+    const _id = req.params._id;
+    const item = await Item.findOne({ _id });
+    if (!item) {
+      return res.status(400).json({ message: "Нету такого айтема" });
+    }
+    await item.deleteOne();
+    return res.json({ message: "Удаленно" });
+  }
+  async getCurrentCollection(req, res) {
+    const { collectionName, username } = req.params;
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "Пользователь с таким именем не существует" });
+    }
+    const collection = await Collection.findOne({ collectionName, username });
+    if (!collection) {
+      return res
+        .status(400)
+        .json({ message: "У этого пользователя нет такой коллекции" });
+    }
+    const items = await Item.find({ collectionName, username });
+    return res.json(items);
   }
 }
 
