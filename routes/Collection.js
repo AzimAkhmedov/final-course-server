@@ -13,4 +13,8 @@ collectionRouter.get(
   "/:username/:collectionName",
   CollectionController.getCurrentCollection
 );
+collectionRouter.get(
+  "/params/:username/:collectionName",
+  CollectionController.getCollectionParams
+);
 export default collectionRouter;

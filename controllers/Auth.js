@@ -1,4 +1,3 @@
-import { validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
 import { secret } from "../config.js";
 import User from "../models/User.js";

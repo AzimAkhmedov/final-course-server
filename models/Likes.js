@@ -1,10 +1,10 @@
 import { Schema, model } from "mongoose";
 
-const Collection = new Schema({
+const Likes = new Schema({
   username: { type: String, required: true },
   collectionName: { type: String, required: true },
-  description: { type: String },
-  params: [Schema.Types.Mixed],
+  itemId: { type: Number },
+  likedUsers:{ type:Array},
 });
 
-export default model("Collection", Collection);
+export default model("Likes", Likes);

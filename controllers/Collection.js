@@ -33,7 +33,7 @@ class CollectionController {
     const username = req.params.username;
     let collection = [];
     collection = await Collection.find({ username });
-    return res.json({ collection, username });
+    return res.json(collection);
   }
   async addToCollection(req, res) {
     const { username, collectionName, params } = req.body;
@@ -78,6 +78,22 @@ class CollectionController {
     }
     const items = await Item.find({ collectionName, username });
     return res.json(items);
+  }
+  async getCollectionParams(req, res) {
+    const { collectionName, username } = req.params;
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "Пользователь с таким именем не существует" });
+    }
+    const collection = await Collection.findOne({ collectionName, username });
+    if (!collection) {
+      return res
+        .status(400)
+        .json({ message: "У этого пользователя нет такой коллекции" });
+    }
+    return res.json(collection.params);
   }
 }
 
