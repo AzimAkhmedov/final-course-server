@@ -1,6 +1,44 @@
-import Comments from "../models/Comments";
+import Comments from "../models/Comments.js";
+import Item from "../models/Item.js";
+import User from "../models/User.js";
+import Collection from "../models/Collection.js";
 
 class ItemController {
+  async createItem(req, res) {
+    try {
+      const { username, collectionName, itemName, param } = req.body;
+
+      const newItem = new Item({ collectionName, username, itemName, param });
+      const user = await User.findOne({ username });
+      const userCollection = await Collection.findOne({
+        username,
+        collectionName,
+      });
+      if (!user) {
+        return res.status(400).json({ message: "Нету такого пользователя" });
+      }
+      if (!userCollection) {
+        return res.status(400).json({ message: "Нету такой коллекции" });
+      }
+      await newItem.save();
+      return res.json(newItem);
+    } catch (error) {}
+  }
+  async deleteItem(req, res) {
+    try {
+      const { _id } = req.params;
+      const item = Item.findOne(_id);
+      await item.deleteOne();
+    } catch (error) {}
+  }
+  async updateItem(req, res) {}
+  async getItems(req, res) {
+    try {
+      const { username, collectionName } = req.params;
+      const items = await Item.find({ username, collectionName });
+      return res.json(items);
+    } catch (error) {}
+  }
   async getComments(req, res) {
     try {
       const { username, collectionName, itemId } = req.params;
@@ -15,10 +53,22 @@ class ItemController {
   async PressLike(req, res) {}
   async WriteComment(req, res) {
     try {
-         const {} = req.body
-         const comment = new Comments()
-    } catch (error) {
-        
-    }
+      const { username, collectionName, itemId, authorName, comment } =
+        req.body;
+      const newComment = {
+        username,
+        collectionName,
+        itemId,
+        authorName,
+        comment,
+        time: new Date().toLocaleString("en-En", { dateStyle: "short" }),
+      };
+      const itemComment = new Comments(newComment);
+      await itemComment.save();
+
+      return res.json(itemComment);
+    } catch (error) {}
   }
 }
+
+export default new ItemController();

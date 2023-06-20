@@ -4,9 +4,10 @@ const Comments = new Schema({
   username: { type: String, required: true },
   collectionName: { type: String, required: true },
   itemId: { type: Number, unique: true },
-  comments: { type: Array },
+  authorName: { type: String },
+  comment: { type: String },
+  time: { type: String },
 });
-
 
 //   authorName: { type: String, required: true },
 //   time: { type: String },

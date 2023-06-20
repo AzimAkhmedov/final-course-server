@@ -4,7 +4,7 @@ import User from "../models/User.js";
 
 class CollectionController {
   async createNewCollection(req, res) {
-    const { username, params, collectionName } = req.body;
+    const { username, params, collectionName, description } = req.body;
     const user = await User.findOne({ username });
     if (!user) {
       return res
@@ -18,15 +18,20 @@ class CollectionController {
         .json({ message: "Такая коллекция у данного юзера уже есть" });
     }
 
-    const newCollection = new Collection({ username, collectionName, params });
+    const newCollection = new Collection({
+      username,
+      collectionName,
+      params,
+      description,
+    });
     await newCollection.save();
     return res.json({ message: "Успешно добавленно" });
   }
   async deleteCollection(req, res) {
-    const username = req.params.username;
-    const collectionName = req.params.collectionName;
-    const collection = await Collection.findOne({ collectionName, username });
-    await collection.deleteOne();
+    const { _id } = req.params;
+    const collection = await Collection.findById(_id);
+    console.log(_id);
+    collection.deleteOne();
     return res.json({ message: "Успешно удалено" });
   }
   async getUserCollections(req, res) {
@@ -93,13 +98,14 @@ class CollectionController {
         .status(400)
         .json({ message: "У этого пользователя нет такой коллекции" });
     }
+    console.log(user, collection);
     return res.json(collection.params);
   }
   async getLastCollections(req, res) {
     try {
       const { pagination } = req.params;
       const data = await Collection.find();
-     console.log(pagination);
+      console.log(pagination);
       data.reverse();
       let arr = [];
       if ((pagination - 1) * 20 > data.length) {
