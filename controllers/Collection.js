@@ -95,6 +95,26 @@ class CollectionController {
     }
     return res.json(collection.params);
   }
+  async getLastCollections(req, res) {
+    try {
+      const { pagination } = req.params;
+      const data = await Collection.find();
+     console.log(pagination);
+      data.reverse();
+      let arr = [];
+      if ((pagination - 1) * 20 > data.length) {
+        return res.status(400).json({ message: "Empty page" });
+      }
+
+      for (let i = (pagination - 1) * 20; i < 20 * pagination; i++) {
+        if (i >= data.length) break;
+        arr.push(data[i]);
+      }
+      return res.json(arr);
+    } catch (e) {
+      return res.status(400).json({ message: "Error" });
+    }
+  }
 }
 
 export default new CollectionController();
