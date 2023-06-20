@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import { AuthRouter, collectionRouter } from "./routes/index.js";
+import { AuthRouter, ThemeRouter, collectionRouter } from "./routes/index.js";
 import cors from "cors";
 
 const app = express();
@@ -11,6 +11,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/auth", AuthRouter);
 app.use("/collection", collectionRouter);
+app.use("/theme", ThemeRouter);
 const Start = async () => {
   try {
     await mongoose.connect(db);
