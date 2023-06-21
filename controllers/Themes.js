@@ -3,8 +3,18 @@ import Themes from "../models/Themes.js";
 class ThemeController {
   async create(req, res) {
     try {
-      const { theme } = req.body;
-      const newTheme = new Themes(theme);
+      const { theme, themeRu } = req.body;
+      const variant = await Themes.findOne({ theme });
+      const variant2 = await Themes.findOne({ themeRu });
+
+      if (variant || variant2) {
+        return res.status(400).json({
+          message: "Such theme is already exist ",
+          messageRu: "Такая тематика уже существует!",
+        });
+      }
+
+      const newTheme = new Themes({ theme, themeRu });
       await newTheme.save();
       return res.json(newTheme);
     } catch (error) {

@@ -4,7 +4,7 @@ import User from "../models/User.js";
 
 class CollectionController {
   async createNewCollection(req, res) {
-    const { username, params, collectionName, description } = req.body;
+    const { username, params, collectionName, description, theme } = req.body;
     const user = await User.findOne({ username });
     if (!user) {
       return res
@@ -23,6 +23,7 @@ class CollectionController {
       collectionName,
       params,
       description,
+      theme,
     });
     await newCollection.save();
     return res.json({ message: "Успешно добавленно" });
