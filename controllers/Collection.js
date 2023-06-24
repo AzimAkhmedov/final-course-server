@@ -31,8 +31,15 @@ class CollectionController {
   async deleteCollection(req, res) {
     const { _id } = req.params;
     const collection = await Collection.findById(_id);
+    const items = await Item.find({
+      collectionName: collection.collectionName,
+      username: collection.username,
+    });
     console.log(_id);
     collection.deleteOne();
+    items.forEach(async (e) => {
+      await e.deleteOne();
+    });
     return res.json({ message: "Успешно удалено" });
   }
   async getUserCollections(req, res) {
@@ -44,6 +51,7 @@ class CollectionController {
   async addToCollection(req, res) {
     const { username, collectionName, params } = req.body;
     const user = await User.findOne({ username });
+    console.log(params);
     if (!user) {
       return res
         .status(400)
@@ -57,7 +65,7 @@ class CollectionController {
     }
     const item = new Item({ collectionName, params, username });
     await item.save();
-    return res.json({ message: "Сохранено" });
+    return res.json(item);
   }
   async removeFromCollection(req, res) {
     const _id = req.params._id;
@@ -99,21 +107,20 @@ class CollectionController {
         .status(400)
         .json({ message: "У этого пользователя нет такой коллекции" });
     }
-    console.log(user, collection);
     return res.json(collection.params);
   }
   async getLastCollections(req, res) {
     try {
       const { pagination } = req.params;
-      const data = await Collection.find();
+      const data = await Item.find();
       console.log(pagination);
       data.reverse();
       let arr = [];
-      if ((pagination - 1) * 20 > data.length) {
+      if ((pagination - 1) * 9 > data.length) {
         return res.status(400).json({ message: "Empty page" });
       }
 
-      for (let i = (pagination - 1) * 20; i < 20 * pagination; i++) {
+      for (let i = (pagination - 1) * 9; i < 9 * pagination; i++) {
         if (i >= data.length) break;
         arr.push(data[i]);
       }
@@ -121,6 +128,26 @@ class CollectionController {
     } catch (e) {
       return res.status(400).json({ message: "Error" });
     }
+  }
+  async getPagesAmount(req, res) {
+    const data = await Item.find();
+    return res.json({ pages: Math.ceil(data.length / 9) });
+  }
+  async getByTheme(req, res) {
+    const { pagination, theme } = req.params;
+    const data = await Item.find({ theme });
+
+    data.reverse();
+    let arr = [];
+    if ((pagination - 1) * 9 > data.length) {
+      return res.status(400).json({ message: "Empty page" });
+    }
+
+    for (let i = (pagination - 1) * 9; i < 9 * pagination; i++) {
+      if (i >= data.length) break;
+      arr.push(data[i]);
+    }
+    return res.json(arr);
   }
 }
 

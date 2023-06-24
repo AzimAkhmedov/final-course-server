@@ -32,10 +32,11 @@ class ItemController {
     } catch (error) {}
   }
   async updateItem(req, res) {}
-  async getItems(req, res) {
+  async getItem(req, res) {
     try {
-      const { username, collectionName } = req.params;
-      const items = await Item.find({ username, collectionName });
+      const { _id } = req.params;
+      console.log(_id);
+      const items = await Item.findById(_id);
       return res.json(items);
     } catch (error) {}
   }
