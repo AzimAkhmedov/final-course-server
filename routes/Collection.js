@@ -6,7 +6,10 @@ collectionRouter.get("/:username", CollectionController.getUserCollections);
 collectionRouter.delete("/delete/:_id", CollectionController.deleteCollection);
 
 collectionRouter.post("/add", CollectionController.addToCollection);
-collectionRouter.delete("/item/:_id", CollectionController.removeFromCollection);
+collectionRouter.delete(
+  "/item/:_id",
+  CollectionController.removeFromCollection
+);
 collectionRouter.get(
   "/usercollection/:username/:collectionName",
   CollectionController.getCurrentCollection
@@ -24,4 +27,5 @@ collectionRouter.get(
   CollectionController.getByTheme
 );
 collectionRouter.get("/pages/amount", CollectionController.getPagesAmount);
+collectionRouter.get("/tags", CollectionController.getTags);
 export default collectionRouter;

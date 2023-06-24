@@ -42,9 +42,8 @@ class ItemController {
   }
   async getComments(req, res) {
     try {
-      const { username, collectionName, itemId } = req.params;
-      const comments = await Comments.findOne(username, collectionName, itemId);
-
+      const { itemId } = req.params;
+      const comments = await Comments.find({ itemId });
       return res.json(comments);
     } catch (error) {
       return res.status(400).json({ message: "Error" });
@@ -68,7 +67,9 @@ class ItemController {
       await itemComment.save();
 
       return res.json(itemComment);
-    } catch (error) {}
+    } catch (error) {
+      return res.status(400).json({ message: "Error" });
+    }
   }
 }
 

@@ -1,5 +1,6 @@
 import Collection from "../models/Collection.js";
 import Item from "../models/Item.js";
+import Tags from "../models/Tags.js";
 import User from "../models/User.js";
 
 class CollectionController {
@@ -49,7 +50,7 @@ class CollectionController {
     return res.json(collection);
   }
   async addToCollection(req, res) {
-    const { username, collectionName, params } = req.body;
+    const { username, collectionName, params, tag } = req.body;
     const user = await User.findOne({ username });
     console.log(params);
     if (!user) {
@@ -63,7 +64,14 @@ class CollectionController {
         .status(400)
         .json({ message: "У этого пользователя нет такой коллекции" });
     }
-    const item = new Item({ collectionName, params, username });
+    tag.forEach(async (e) => {
+      const isExist = await Tags.findOne({ tag: e });
+
+      if (!isExist) {
+        await new Tags({ tag: e }).save();
+      }
+    });
+    const item = new Item({ collectionName, params, username, tag });
     await item.save();
     return res.json(item);
   }
@@ -148,6 +156,10 @@ class CollectionController {
       arr.push(data[i]);
     }
     return res.json(arr);
+  }
+  async getTags(req, res) {
+    const data = await Tags.find();
+    return res.json(data);
   }
 }
 
