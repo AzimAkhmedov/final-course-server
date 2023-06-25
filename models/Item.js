@@ -5,7 +5,7 @@ const Item = new Schema({
   collectionName: { type: String, required: true },
   params: Schema.Types.Mixed,
   itemName: { type: String },
-  tag: { type: String },
+  tags: { type: Array },
 });
 
 export default model("Item", Item);

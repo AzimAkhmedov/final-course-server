@@ -27,5 +27,5 @@ collectionRouter.get(
   CollectionController.getByTheme
 );
 collectionRouter.get("/pages/amount", CollectionController.getPagesAmount);
-collectionRouter.get("/tags", CollectionController.getTags);
+collectionRouter.get("/tags/item", CollectionController.getTags);
 export default collectionRouter;

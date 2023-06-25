@@ -50,9 +50,9 @@ class CollectionController {
     return res.json(collection);
   }
   async addToCollection(req, res) {
-    const { username, collectionName, params, tag } = req.body;
+    const { username, collectionName, params, tags } = req.body;
     const user = await User.findOne({ username });
-    console.log(params);
+
     if (!user) {
       return res
         .status(400)
@@ -64,14 +64,16 @@ class CollectionController {
         .status(400)
         .json({ message: "У этого пользователя нет такой коллекции" });
     }
-    tag.forEach(async (e) => {
-      const isExist = await Tags.findOne({ tag: e });
+    tags.forEach(async (tag) => {
+      const isExist = await Tags.findOne({ tag });
 
+      console.log(isExist);
       if (!isExist) {
-        await new Tags({ tag: e }).save();
+        const newtag = new Tags({ tag });
+        await newtag.save();
       }
     });
-    const item = new Item({ collectionName, params, username, tag });
+    const item = new Item({ collectionName, params, username, tags });
     await item.save();
     return res.json(item);
   }
@@ -158,7 +160,7 @@ class CollectionController {
     return res.json(arr);
   }
   async getTags(req, res) {
-    const data = await Tags.find();
+    const data = await Tags.find({});
     return res.json(data);
   }
 }
