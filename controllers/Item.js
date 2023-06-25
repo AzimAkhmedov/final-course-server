@@ -35,7 +35,6 @@ class ItemController {
   async getItem(req, res) {
     try {
       const { _id } = req.params;
-      console.log(_id);
       const items = await Item.findById(_id);
       return res.json(items);
     } catch (error) {}
@@ -44,6 +43,7 @@ class ItemController {
     try {
       const { itemId } = req.params;
       const comments = await Comments.find({ itemId });
+      // console.log(comments);
       return res.json(comments);
     } catch (error) {
       return res.status(400).json({ message: "Error" });
@@ -55,6 +55,7 @@ class ItemController {
     try {
       const { username, collectionName, itemId, authorName, comment } =
         req.body;
+
       const newComment = {
         username,
         collectionName,
@@ -63,6 +64,8 @@ class ItemController {
         comment,
         time: new Date().toLocaleString("en-En", { dateStyle: "short" }),
       };
+      console.log(newComment);
+
       const itemComment = new Comments(newComment);
       await itemComment.save();
 

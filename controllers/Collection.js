@@ -36,7 +36,6 @@ class CollectionController {
       collectionName: collection.collectionName,
       username: collection.username,
     });
-    console.log(_id);
     collection.deleteOne();
     items.forEach(async (e) => {
       await e.deleteOne();
@@ -67,7 +66,6 @@ class CollectionController {
     tags.forEach(async (tag) => {
       const isExist = await Tags.findOne({ tag });
 
-      console.log(isExist);
       if (!isExist) {
         const newtag = new Tags({ tag });
         await newtag.save();
@@ -123,7 +121,6 @@ class CollectionController {
     try {
       const { pagination } = req.params;
       const data = await Item.find();
-      console.log(pagination);
       data.reverse();
       let arr = [];
       if ((pagination - 1) * 9 > data.length) {

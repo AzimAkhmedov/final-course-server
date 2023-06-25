@@ -5,5 +5,6 @@ const itemRouter = new Router();
 itemRouter.get("/get/:_id", ItemController.getItem);
 itemRouter.post("/", ItemController.createItem);
 itemRouter.delete("/delete/:_id", ItemController.deleteItem);
-
-export default itemRouter
+itemRouter.get("/comments/get/:itemId", ItemController.getComments);
+itemRouter.post("/comments/create", ItemController.WriteComment);
+export default itemRouter;

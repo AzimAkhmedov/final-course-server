@@ -1,9 +1,9 @@
 import { Schema, model } from "mongoose";
 
 const Comments = new Schema({
-  username: { type: String, required: true },
-  collectionName: { type: String, required: true },
-  itemId: { type: Number, },
+  username: { type: String,  },
+  collectionName: { type: String,  },
+  itemId: { type: String, },
   authorName: { type: String },
   comment: { type: String },
   time: { type: String },
