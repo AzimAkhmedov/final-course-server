@@ -141,8 +141,8 @@ class CollectionController {
     return res.json({ pages: Math.ceil(data.length / 9) });
   }
   async getByTheme(req, res) {
-    const { pagination, theme } = req.params;
-    const data = await Item.find({ theme });
+    const { pagination, tags } = req.params;
+    const data = await Item.find({ tags });
 
     data.reverse();
     let arr = [];

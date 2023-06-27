@@ -44,7 +44,7 @@ class ItemController {
       const { itemId } = req.params;
       const comments = await Comments.find({ itemId });
       // console.log(comments);
-      return res.json(comments);
+      return res.json(comments.reverse());
     } catch (error) {
       return res.status(400).json({ message: "Error" });
     }
@@ -64,10 +64,11 @@ class ItemController {
         comment,
         time: new Date().toLocaleString("en-En", { dateStyle: "short" }),
       };
-      console.log(newComment);
 
       const itemComment = new Comments(newComment);
+
       await itemComment.save();
+      console.log(itemComment);
 
       return res.json(itemComment);
     } catch (error) {
