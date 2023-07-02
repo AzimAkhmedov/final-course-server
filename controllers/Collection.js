@@ -142,22 +142,23 @@ class CollectionController {
   }
   async getByTheme(req, res) {
     const { pagination, tags } = req.params;
-    const data = await Item.find({ tags });
-
-    data.reverse();
+    const data = await Item.find();
+    const filtred = data.filter((e) => e.tags.includes(tags));
+     console.log(tags);
+    filtred.reverse();
     let arr = [];
     if ((pagination - 1) * 9 > data.length) {
       return res.status(400).json({ message: "Empty page" });
     }
 
     for (let i = (pagination - 1) * 9; i < 9 * pagination; i++) {
-      if (i >= data.length) break;
-      arr.push(data[i]);
+      if (i >= filtred.length) break;
+      arr.push(filtred[i]);
     }
     return res.json(arr);
   }
   async getTags(req, res) {
-    const data = await Tags.find({});
+    const data = await Tags.find();
     return res.json(data);
   }
 }

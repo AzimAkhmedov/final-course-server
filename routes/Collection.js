@@ -23,7 +23,7 @@ collectionRouter.get(
   CollectionController.getLastCollections
 );
 collectionRouter.get(
-  "/getgapes/:pagination/:theme",
+  "/getgapes/:pagination/:tags",
   CollectionController.getByTheme
 );
 collectionRouter.get("/pages/amount", CollectionController.getPagesAmount);
