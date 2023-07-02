@@ -50,9 +50,14 @@ class ItemController {
     }
   }
   async getLikes(req, res) {
-    const { itemId } = req.params;
-    const likesAmount = await Likes.find(itemId);
-    return res.json(likesAmount.length);
+    try {
+      const { itemId } = req.params;
+      const likesAmount = await Likes.find({ itemId });
+      console.log(likesAmount);
+      return res.json(likesAmount);
+    } catch (error) {
+      return res.status(400).json({ message: "Error" });
+    }
   }
   async isLiked(req, res) {
     const { itemId, wholikes } = req.params;
