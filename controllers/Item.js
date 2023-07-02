@@ -1,6 +1,7 @@
 import Comments from "../models/Comments.js";
 import Item from "../models/Item.js";
 import User from "../models/User.js";
+import Likes from "../models/Likes.js";
 import Collection from "../models/Collection.js";
 
 class ItemController {
@@ -43,14 +44,38 @@ class ItemController {
     try {
       const { itemId } = req.params;
       const comments = await Comments.find({ itemId });
-      // console.log(comments);
       return res.json(comments.reverse());
     } catch (error) {
       return res.status(400).json({ message: "Error" });
     }
   }
-  async getLikes(req, res) {}
-  async PressLike(req, res) {}
+  async getLikes(req, res) {
+    const { itemId } = req.params;
+    const likesAmount = await Likes.find(itemId);
+    return res.json(likesAmount.length);
+  }
+  async isLiked(req, res) {
+    const { itemId, wholikes } = req.params;
+    const liked = await Likes.findOne({ wholikes, itemId });
+    let ans = false;
+    if (liked) {
+      ans = true;
+    }
+    return res.json(ans);
+  }
+
+  async PressLike(req, res) {
+    const { wholikes, itemId, username, collectionName } = req.body;
+    const liked = await Likes.findOne({ wholikes, itemId });
+
+    if (liked) {
+      liked.deleteOne();
+    } else {
+      const like = new Likes({ collectionName, username, wholikes, itemId });
+      await like.save();
+    }
+    return res.json(liked);
+  }
   async WriteComment(req, res) {
     try {
       const { username, collectionName, itemId, authorName, comment } =
