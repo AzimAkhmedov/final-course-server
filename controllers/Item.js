@@ -78,6 +78,7 @@ class ItemController {
     } else {
       const like = new Likes({ collectionName, username, wholikes, itemId });
       await like.save();
+      return res.json(like);
     }
     return res.json(liked);
   }

@@ -161,6 +161,9 @@ class CollectionController {
     const data = await Tags.find();
     return res.json(data);
   }
+  async getFiveMostCollections(req, res){
+      const items = await Item.find() 
+  }
 }
 
 export default new CollectionController();
