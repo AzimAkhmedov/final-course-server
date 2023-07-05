@@ -28,4 +28,5 @@ collectionRouter.get(
 );
 collectionRouter.get("/pages/amount", CollectionController.getPagesAmount);
 collectionRouter.get("/tags/item", CollectionController.getTags);
+collectionRouter.get("/largest/mostFive/", CollectionController.getFiveMostCollections);
 export default collectionRouter;

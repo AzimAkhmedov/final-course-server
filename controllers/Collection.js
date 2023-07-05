@@ -144,7 +144,7 @@ class CollectionController {
     const { pagination, tags } = req.params;
     const data = await Item.find();
     const filtred = data.filter((e) => e.tags.includes(tags));
-     console.log(tags);
+    console.log(tags);
     filtred.reverse();
     let arr = [];
     if ((pagination - 1) * 9 > data.length) {
@@ -161,8 +161,45 @@ class CollectionController {
     const data = await Tags.find();
     return res.json(data);
   }
-  async getFiveMostCollections(req, res){
-      const items = await Item.find() 
+  async getFiveMostCollections(req, res) {
+    const items = await Item.find();
+    const collections = await Collection.find();
+
+    let colls = [];
+    collections.forEach((e) => {
+      colls.push({
+        username: e.username,
+        collectionName: e.collectionName,
+        description: e.description,
+        theme: e.theme,
+      });
+    });
+    let ctr = new Array(colls.length).fill(0);
+    items.forEach((e, i) => {
+      let a = colls.findIndex(
+        (a) =>
+          a.collectionName === e.collectionName && a.username === e.username
+      );
+      ctr[a]++;
+    });
+    let data = [];
+    let ctrCopy = [...ctr];
+    let max = ctr[0];
+    let idx = 0;
+    for (let i = 0; i < 5; i++) {
+      for (let g = 0; g < ctrCopy.length; g++) {
+        if (max < ctrCopy[g]) {
+          max = ctrCopy[g];
+          idx = g;
+          ctrCopy[g] = 0;
+        }
+      }
+      data.push(colls[idx]);
+      ctrCopy[idx] = 0;
+      max = ctrCopy[0];
+      idx = 0;
+    }
+    return res.json(data);
   }
 }
 
