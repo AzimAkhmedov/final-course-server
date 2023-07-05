@@ -76,6 +76,13 @@ class AuthController {
       console.log(e);
     }
   }
+  async isAdmin(req, res) {
+    try {
+      const { username } = req.params;
+      const user = await User.findOne({ username });
+      return res.json({ isAdmin: user.role === "Admin" });
+    } catch (error) {}
+  }
 }
 
 export default new AuthController();

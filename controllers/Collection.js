@@ -1,5 +1,6 @@
 import Collection from "../models/Collection.js";
 import Item from "../models/Item.js";
+import Tags from "../models/Tags.js";
 import User from "../models/User.js";
 
 class CollectionController {
@@ -31,8 +32,14 @@ class CollectionController {
   async deleteCollection(req, res) {
     const { _id } = req.params;
     const collection = await Collection.findById(_id);
-    console.log(_id);
+    const items = await Item.find({
+      collectionName: collection.collectionName,
+      username: collection.username,
+    });
     collection.deleteOne();
+    items.forEach(async (e) => {
+      await e.deleteOne();
+    });
     return res.json({ message: "Успешно удалено" });
   }
   async getUserCollections(req, res) {
@@ -42,8 +49,9 @@ class CollectionController {
     return res.json(collection);
   }
   async addToCollection(req, res) {
-    const { username, collectionName, params } = req.body;
+    const { username, collectionName, params, tags } = req.body;
     const user = await User.findOne({ username });
+
     if (!user) {
       return res
         .status(400)
@@ -55,9 +63,17 @@ class CollectionController {
         .status(400)
         .json({ message: "У этого пользователя нет такой коллекции" });
     }
-    const item = new Item({ collectionName, params, username });
+    tags.forEach(async (tag) => {
+      const isExist = await Tags.findOne({ tag });
+
+      if (!isExist) {
+        const newtag = new Tags({ tag });
+        await newtag.save();
+      }
+    });
+    const item = new Item({ collectionName, params, username, tags });
     await item.save();
-    return res.json({ message: "Сохранено" });
+    return res.json(item);
   }
   async removeFromCollection(req, res) {
     const _id = req.params._id;
@@ -99,21 +115,19 @@ class CollectionController {
         .status(400)
         .json({ message: "У этого пользователя нет такой коллекции" });
     }
-    console.log(user, collection);
     return res.json(collection.params);
   }
   async getLastCollections(req, res) {
     try {
       const { pagination } = req.params;
-      const data = await Collection.find();
-      console.log(pagination);
+      const data = await Item.find();
       data.reverse();
       let arr = [];
-      if ((pagination - 1) * 20 > data.length) {
+      if ((pagination - 1) * 9 > data.length) {
         return res.status(400).json({ message: "Empty page" });
       }
 
-      for (let i = (pagination - 1) * 20; i < 20 * pagination; i++) {
+      for (let i = (pagination - 1) * 9; i < 9 * pagination; i++) {
         if (i >= data.length) break;
         arr.push(data[i]);
       }
@@ -121,6 +135,71 @@ class CollectionController {
     } catch (e) {
       return res.status(400).json({ message: "Error" });
     }
+  }
+  async getPagesAmount(req, res) {
+    const data = await Item.find();
+    return res.json({ pages: Math.ceil(data.length / 9) });
+  }
+  async getByTheme(req, res) {
+    const { pagination, tags } = req.params;
+    const data = await Item.find();
+    const filtred = data.filter((e) => e.tags.includes(tags));
+    console.log(tags);
+    filtred.reverse();
+    let arr = [];
+    if ((pagination - 1) * 9 > data.length) {
+      return res.status(400).json({ message: "Empty page" });
+    }
+
+    for (let i = (pagination - 1) * 9; i < 9 * pagination; i++) {
+      if (i >= filtred.length) break;
+      arr.push(filtred[i]);
+    }
+    return res.json(arr);
+  }
+  async getTags(req, res) {
+    const data = await Tags.find();
+    return res.json(data);
+  }
+  async getFiveMostCollections(req, res) {
+    const items = await Item.find();
+    const collections = await Collection.find();
+
+    let colls = [];
+    collections.forEach((e) => {
+      colls.push({
+        username: e.username,
+        collectionName: e.collectionName,
+        description: e.description,
+        theme: e.theme,
+      });
+    });
+    let ctr = new Array(colls.length).fill(0);
+    items.forEach((e, i) => {
+      let a = colls.findIndex(
+        (a) =>
+          a.collectionName === e.collectionName && a.username === e.username
+      );
+      ctr[a]++;
+    });
+    let data = [];
+    let ctrCopy = [...ctr];
+    let max = ctr[0];
+    let idx = 0;
+    for (let i = 0; i < 5; i++) {
+      for (let g = 0; g < ctrCopy.length; g++) {
+        if (max < ctrCopy[g]) {
+          max = ctrCopy[g];
+          idx = g;
+          ctrCopy[g] = 0;
+        }
+      }
+      data.push(colls[idx]);
+      ctrCopy[idx] = 0;
+      max = ctrCopy[0];
+      idx = 0;
+    }
+    return res.json(data);
   }
 }
 
