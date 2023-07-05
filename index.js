@@ -5,6 +5,7 @@ import {
   ItemRouter,
   ThemeRouter,
   collectionRouter,
+  AdminRouter,
 } from "./routes/index.js";
 import cors from "cors";
 
@@ -19,6 +20,7 @@ app.use("/auth", AuthRouter);
 app.use("/collection", collectionRouter);
 app.use("/items", ItemRouter);
 app.use("/theme", ThemeRouter);
+app.use("/admin", AdminRouter);
 
 const Start = async () => {
   try {

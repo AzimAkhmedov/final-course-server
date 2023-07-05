@@ -32,7 +32,13 @@ class ItemController {
       await item.deleteOne();
     } catch (error) {}
   }
-  async updateItem(req, res) {}
+  async updateItem(req, res) {
+    const { _id, collectionName, params, username, itemName, tags } = req.body;
+    const found = await Item.findOne({ _id });
+    const update = { collectionName, params, username, itemName, tags };
+    await found.replaceOne(update);
+    return res.json(found);
+  }
   async getItem(req, res) {
     try {
       const { _id } = req.params;
@@ -105,6 +111,26 @@ class ItemController {
     } catch (error) {
       return res.status(400).json({ message: "Error" });
     }
+  }
+  async deleteComment(req, res) {
+    const { _id } = req.params;
+    const found = await Comments.findOne({ _id });
+    await found.deleteOne();
+  }
+  async updateComment(req, res) {
+    const { _id, username, collectionName, itemId, authorName, comment } =
+      req.body;
+    const found = await Comments.findOne({ _id });
+    const update = {
+      username,
+      collectionName,
+      itemId,
+      authorName,
+      comment,
+      time: new Date().toLocaleString("en-En", { dateStyle: "short" }),
+    };
+    await found.updateOne(update);
+    return res.json(update);
   }
 }
 
