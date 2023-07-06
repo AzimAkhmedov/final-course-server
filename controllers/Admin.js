@@ -5,8 +5,7 @@ import bcrypt from "bcryptjs";
 import Collection from "../models/Collection.js";
 const chechIsAdmin = (token) => {
   const decoded = jwt.decode(token);
-
-  return decoded === "Admin";
+  return decoded.role === "Admin";
 };
 class AdminController {
   async isAdmin(req, res) {
@@ -21,7 +20,7 @@ class AdminController {
         });
       }
       if (user.role === "Admin") {
-        const token = jwt.sign("Admin", secret);
+        const token = jwt.sign({ role: "Admin" }, secret);
         return res.json({ isAdmin: true, token });
       }
       return res.json({ isAdmin: false });
@@ -63,6 +62,24 @@ class AdminController {
         .json({ message: "Вы не владеете правами администатора" });
     }
     await found.deleteOne();
+  }
+  async deleteUser(req, res) {
+    const { token, _id } = req.params;
+    const found = await User.findOne({ _id });
+    if (chechIsAdmin(token)) {
+      await found.deleteOne();
+      return res.json({ message: "deleted" });
+    }
+    return res.status(400).json({ message: "Вы не админ" });
+  }
+  async getCollections(req, res) {
+    const data = await Collection.find();
+    
+    return res.json(data);
+  }
+  async getCollectionsPages(req, res) {
+    const data = await Collection.find();
+    return res.json({ pages: Math.ceil(data.length / 9) });
   }
 }
 
