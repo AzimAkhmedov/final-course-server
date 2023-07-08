@@ -59,7 +59,6 @@ class ItemController {
     try {
       const { itemId } = req.params;
       const likesAmount = await Likes.find({ itemId });
-      console.log(likesAmount);
       return res.json(likesAmount);
     } catch (error) {
       return res.status(400).json({ message: "Error" });
@@ -105,7 +104,6 @@ class ItemController {
       const itemComment = new Comments(newComment);
 
       await itemComment.save();
-      console.log(itemComment);
 
       return res.json(itemComment);
     } catch (error) {

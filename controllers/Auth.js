@@ -50,7 +50,11 @@ class AuthController {
           message: `Не правильно введены данные`,
         });
       }
-
+      if (user.status === "Banned") {
+        return res.status(400).json({
+          message: `Вы были забаненны`,
+        });
+      }
       const token = generateAccessToken(user._id, username, user.roles);
       return res.json({ token });
     } catch (e) {
