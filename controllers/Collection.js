@@ -57,7 +57,7 @@ class CollectionController {
     return res.json(collection);
   }
   async addToCollection(req, res) {
-    const { username, collectionName, params, tags } = req.body;
+    const { username, itemName, collectionName, params, tags } = req.body;
     const user = await User.findOne({ username });
 
     if (!user) {
@@ -79,7 +79,7 @@ class CollectionController {
         await newtag.save();
       }
     });
-    const item = new Item({ collectionName, params, username, tags });
+    const item = new Item({ collectionName, params, username, tags, itemName });
     await item.save();
     return res.json(item);
   }
