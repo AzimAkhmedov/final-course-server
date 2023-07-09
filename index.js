@@ -5,8 +5,10 @@ import {
   ItemRouter,
   ThemeRouter,
   collectionRouter,
+  AdminRouter,
 } from "./routes/index.js";
 import cors from "cors";
+import { SearchController } from "./controllers/index.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,6 +21,8 @@ app.use("/auth", AuthRouter);
 app.use("/collection", collectionRouter);
 app.use("/items", ItemRouter);
 app.use("/theme", ThemeRouter);
+app.use("/admin", AdminRouter);
+app.get("/search/:searchparam", SearchController.search);
 
 const Start = async () => {
   try {

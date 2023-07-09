@@ -36,8 +36,16 @@ class CollectionController {
       collectionName: collection.collectionName,
       username: collection.username,
     });
+    const data = await Item.find();
     collection.deleteOne();
     items.forEach(async (e) => {
+      e.tags.forEach(async (a) => {
+        const filtred = data.filter((c) => c.tags.includes(a));
+        if (!filtred) {
+          await Tags.findOne({ tag: a }).deleteOne();
+        }
+      });
+
       await e.deleteOne();
     });
     return res.json({ message: "Успешно удалено" });
@@ -49,7 +57,7 @@ class CollectionController {
     return res.json(collection);
   }
   async addToCollection(req, res) {
-    const { username, collectionName, params, tags } = req.body;
+    const { username, itemName, collectionName, params, tags } = req.body;
     const user = await User.findOne({ username });
 
     if (!user) {
@@ -71,16 +79,26 @@ class CollectionController {
         await newtag.save();
       }
     });
-    const item = new Item({ collectionName, params, username, tags });
+    const item = new Item({ collectionName, params, username, tags, itemName });
     await item.save();
     return res.json(item);
   }
   async removeFromCollection(req, res) {
     const _id = req.params._id;
     const item = await Item.findOne({ _id });
+    const data = await Item.find();
+
+    item.tags.forEach(async (a) => {
+      const filtred = data.filter((c) => c.tags.includes(a));
+      console.log("test:", a, filtred);
+      if (filtred.length === 1) {
+        await Tags.findOne({ tag: a }).deleteOne();
+      }
+    });
     if (!item) {
       return res.status(400).json({ message: "Нету такого айтема" });
     }
+
     await item.deleteOne();
     return res.json({ message: "Удаленно" });
   }
@@ -144,7 +162,6 @@ class CollectionController {
     const { pagination, tags } = req.params;
     const data = await Item.find();
     const filtred = data.filter((e) => e.tags.includes(tags));
-    console.log(tags);
     filtred.reverse();
     let arr = [];
     if ((pagination - 1) * 9 > data.length) {
@@ -186,7 +203,8 @@ class CollectionController {
     let ctrCopy = [...ctr];
     let max = ctr[0];
     let idx = 0;
-    for (let i = 0; i < 5; i++) {
+    let length = colls.length < 5 ? colls.length : 5;
+    for (let i = 0; i < length; i++) {
       for (let g = 0; g < ctrCopy.length; g++) {
         if (max < ctrCopy[g]) {
           max = ctrCopy[g];
