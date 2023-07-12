@@ -59,7 +59,12 @@ class CollectionController {
   async addToCollection(req, res) {
     const { username, itemName, collectionName, params, tags } = req.body;
     const user = await User.findOne({ username });
+     if(!params){
+      return res
+      .status(400)
+      .json({ message: "Пользователь с таким именем не существует" });
 
+     }
     if (!user) {
       return res
         .status(400)
@@ -90,7 +95,6 @@ class CollectionController {
 
     item.tags.forEach(async (a) => {
       const filtred = data.filter((c) => c.tags.includes(a));
-      console.log("test:", a, filtred);
       if (filtred.length === 1) {
         await Tags.findOne({ tag: a }).deleteOne();
       }
