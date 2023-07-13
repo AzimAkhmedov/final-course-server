@@ -8,40 +8,55 @@ import {
 import multer from "multer";
 import { firebaseConfig } from "../config.js";
 import { Router } from "express";
-
+import Collection from "../models/Collection.js";
+import User from "../models/User.js";
 const router = new Router();
-
 initializeApp(firebaseConfig);
 const storage = getStorage();
 const upload = multer({ storage: multer.memoryStorage() });
-
 router.post("/", upload.single("filename"), async (req, res) => {
   try {
     const dateTime = giveCurrentDateTime();
-
     const storageRef = ref(
       storage,
       `files/${req.file.originalname + "       " + dateTime}`
     );
-
     const metadata = {
       contentType: req.file.mimetype,
     };
-
     const snapshot = await uploadBytesResumable(
       storageRef,
       req.file.buffer,
       metadata
     );
     const downloadURL = await getDownloadURL(snapshot.ref);
-
-    console.log("File successfully uploaded.");
-    return res.send({
-      message: "file uploaded to firebase storage",
-      name: req.file.originalname,
-      type: req.file.mimetype,
-      downloadURL: downloadURL,
+    const { username, params, collectionName, description, theme } = req.body;
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "Пользователь с таким именем не существует" });
+    }
+    const collection = await Collection.findOne({
+      collectionName,
+      username,
     });
+    if (collection && collection.username === username) {
+      return res
+        .status(400)
+        .json({ message: "Такая коллекция у данного юзера уже есть" });
+    }
+
+    const newCollection = new Collection({
+      username,
+      collectionName,
+      params: JSON.parse(params),
+      description,
+      theme,
+      imgUrl: downloadURL,
+    });
+    await newCollection.save();
+    return res.json(newCollection);
   } catch (error) {
     return res.status(400).send(error.message);
   }

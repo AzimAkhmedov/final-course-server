@@ -59,12 +59,11 @@ class CollectionController {
   async addToCollection(req, res) {
     const { username, itemName, collectionName, params, tags } = req.body;
     const user = await User.findOne({ username });
-     if(!params){
+    if (!params) {
       return res
-      .status(400)
-      .json({ message: "Пользователь с таким именем не существует" });
-
-     }
+        .status(400)
+        .json({ message: "Пользователь с таким именем не существует" });
+    }
     if (!user) {
       return res
         .status(400)
@@ -193,6 +192,7 @@ class CollectionController {
         collectionName: e.collectionName,
         description: e.description,
         theme: e.theme,
+        imgUrl: e.imgUrl,
       });
     });
     let ctr = new Array(colls.length).fill(0);
