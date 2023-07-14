@@ -6,6 +6,7 @@ const Collection = new Schema({
   description: { type: String },
   params: [Schema.Types.Mixed],
   theme: { type: String },
+  imgUrl: { type: String },
 });
 
 export default model("Collection", Collection);

@@ -38,11 +38,12 @@ class AdminController {
     const found = await User.findOne({ username });
     const user = {
       username,
-      password,
+      password: found.password,
+      status: found.status,
       role: "Admin",
     };
     await found.replaceOne(user);
-    res.json({ message: "Админ сохранен" });
+    res.json(user);
   }
   async deleteAdmin(req, res) {
     const { _id, token } = req.params;

@@ -12,7 +12,6 @@ class AuthController {
     try {
       const { username, password, role } = req.body;
       const candidate = await User.findOne({ username });
-      console.log(username, candidate);
       if (candidate) {
         return res
           .status(400)
@@ -58,7 +57,6 @@ class AuthController {
       const token = generateAccessToken(user._id, username, user.roles);
       return res.json({ token });
     } catch (e) {
-      console.log(e);
       res.status(400).json({ message: "Login error" });
     }
   }
@@ -77,7 +75,6 @@ class AuthController {
       const users = await User.find();
       res.json(users);
     } catch (e) {
-      console.log(e);
     }
   }
   async isAdmin(req, res) {
