@@ -37,7 +37,7 @@ class ItemController {
     const found = await Item.findOne({ _id });
     const update = { collectionName, params, username, itemName, tags };
     await found.replaceOne(update);
-    return res.json(found);
+    return res.json(update);
   }
   async getItem(req, res) {
     try {

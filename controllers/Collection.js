@@ -223,6 +223,14 @@ class CollectionController {
     }
     return res.json(data);
   }
+  async getCollectionImg() {
+    const { _id } = req.params;
+    const collection = await Collection.findById(_id);
+    if (!collection) {
+      return res.status(400).json({ message: "No scuh collection" });
+    }
+    return res.json({ imgUrl: collection.imgUrl });
+  }
 }
 
 export default new CollectionController();

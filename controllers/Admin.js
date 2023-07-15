@@ -48,7 +48,7 @@ class AdminController {
   async deleteAdmin(req, res) {
     const { _id, token } = req.params;
     const found = await User.findOne({ _id });
-    if (!chechIsAdmin()) {
+    if (!chechIsAdmin(token)) {
       return res
         .status(400)
         .json({ message: "Вы не владеете правами администатора" });

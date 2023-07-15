@@ -74,8 +74,7 @@ class AuthController {
     try {
       const users = await User.find();
       res.json(users);
-    } catch (e) {
-    }
+    } catch (e) {}
   }
   async isAdmin(req, res) {
     try {
