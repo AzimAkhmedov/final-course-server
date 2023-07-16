@@ -5,5 +5,5 @@ const ThemeRouter = new Router();
 
 ThemeRouter.get("/", ThemeController.get);
 ThemeRouter.post("/", ThemeController.create);
-ThemeController.delete("/:_id", ThemeController.delete);
+ThemeController.delete("/:_id/:token", ThemeController.delete);
 export default ThemeRouter;
