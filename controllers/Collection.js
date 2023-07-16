@@ -223,7 +223,7 @@ class CollectionController {
     }
     return res.json(data);
   }
-  async getCollectionImg() {
+  async getCollectionImg(req, res) {
     const { _id } = req.params;
     const collection = await Collection.findById(_id);
     if (!collection) {
