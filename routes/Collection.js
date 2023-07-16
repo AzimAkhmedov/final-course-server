@@ -32,4 +32,8 @@ collectionRouter.get(
   "/largest/mostFive/",
   CollectionController.getFiveMostCollections
 );
+collectionRouter.get(
+  "/img/:username/:collection",
+  CollectionController.getCollectionImg
+);
 export default collectionRouter;

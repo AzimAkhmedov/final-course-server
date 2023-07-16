@@ -224,12 +224,16 @@ class CollectionController {
     return res.json(data);
   }
   async getCollectionImg(req, res) {
-    const { _id } = req.params;
-    const collection = await Collection.findById(_id);
-    if (!collection) {
+    const { collection, username } = req.params;
+    const found = await Collection.findOne({
+      collectionName: collection,
+      username,
+    });
+
+    if (!found) {
       return res.status(400).json({ message: "No scuh collection" });
     }
-    return res.json({ imgUrl: collection.imgUrl });
+    return res.json({ imgUrl: found.imgUrl });
   }
 }
 
