@@ -2,6 +2,7 @@ import Collection from "../models/Collection.js";
 import Item from "../models/Item.js";
 import Tags from "../models/Tags.js";
 import User from "../models/User.js";
+import Comment from "../models/Comments.js";
 
 class CollectionController {
   async createNewCollection(req, res) {
@@ -39,6 +40,7 @@ class CollectionController {
     const data = await Item.find();
     collection.deleteOne();
     items.forEach(async (e) => {
+      await Comment.deleteMany({ itemId: e._id });
       e.tags.forEach(async (a) => {
         const filtred = data.filter((c) => c.tags.includes(a));
         if (!filtred) {
@@ -91,13 +93,8 @@ class CollectionController {
     const _id = req.params._id;
     const item = await Item.findOne({ _id });
     const data = await Item.find();
+    const comments = await Comment.deleteMany({ itemId: item._id });
 
-    item.tags.forEach(async (a) => {
-      const filtred = data.filter((c) => c.tags.includes(a));
-      if (filtred.length === 1) {
-        await Tags.findOne({ tag: a }).deleteOne();
-      }
-    });
     if (!item) {
       return res.status(400).json({ message: "Нету такого айтема" });
     }
@@ -229,7 +226,6 @@ class CollectionController {
       collectionName: collection,
       username,
     });
-
     if (!found) {
       return res.status(400).json({ message: "No scuh collection" });
     }
