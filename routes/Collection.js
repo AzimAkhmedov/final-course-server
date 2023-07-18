@@ -2,9 +2,8 @@ import { Router } from "express";
 import { CollectionController } from "../controllers/index.js";
 const collectionRouter = new Router();
 collectionRouter.post("/", CollectionController.createNewCollection);
-collectionRouter.get("/:username", CollectionController.getUserCollections);
+collectionRouter.get("/user/:username", CollectionController.getUserCollections);
 collectionRouter.delete("/delete/:_id", CollectionController.deleteCollection);
-
 collectionRouter.post("/add", CollectionController.addToCollection);
 collectionRouter.delete(
   "/item/:_id",
@@ -36,4 +35,5 @@ collectionRouter.get(
   "/img/:username/:collection",
   CollectionController.getCollectionImg
 );
+collectionRouter.get("/current/:_id", CollectionController.getCollectionById);
 export default collectionRouter;

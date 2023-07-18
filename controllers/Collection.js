@@ -58,6 +58,11 @@ class CollectionController {
     collection = await Collection.find({ username });
     return res.json(collection);
   }
+  async getCollectionById(req, res) {
+    const { _id } = req.params;
+    const collection = await Collection.findById(_id);
+    return res.json(collection);
+  }
   async addToCollection(req, res) {
     const { username, itemName, collectionName, params, tags } = req.body;
     const user = await User.findOne({ username });
