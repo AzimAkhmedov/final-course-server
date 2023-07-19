@@ -46,7 +46,6 @@ router.post("/", upload.single("filename"), async (req, res) => {
         .status(400)
         .json({ message: "Такая коллекция у данного юзера уже есть" });
     }
-
     const newCollection = new Collection({
       username,
       collectionName,

@@ -3,7 +3,11 @@ import Item from "../models/Item.js";
 import Tags from "../models/Tags.js";
 import User from "../models/User.js";
 import Comment from "../models/Comments.js";
-
+import { deleteObject, ref, getStorage } from "firebase/storage";
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "../config.js";
+initializeApp(firebaseConfig);
+const storage = getStorage();
 class CollectionController {
   async createNewCollection(req, res) {
     const { username, params, collectionName, description, theme } = req.body;
@@ -33,11 +37,20 @@ class CollectionController {
   async deleteCollection(req, res) {
     const { _id } = req.params;
     const collection = await Collection.findById(_id);
+    if (!collection) {
+      return res.status(400).json({ message: "Нету такой коллекции" });
+    }
     const items = await Item.find({
       collectionName: collection.collectionName,
       username: collection.username,
     });
     const data = await Item.find();
+    const reference = ref(storage, collection.imgUrl);
+    deleteObject(reference)
+      .then((res) => {})
+      .catch((e) => {
+        return res.status(400).json({ message: "Ошибка удаления фотографии" });
+      });
     collection.deleteOne();
     items.forEach(async (e) => {
       await Comment.deleteMany({ itemId: e._id });
